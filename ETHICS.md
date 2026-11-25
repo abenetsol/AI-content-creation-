@@ -11,7 +11,7 @@ The keyframe stage reads this file. A shot that includes a character marked `rea
 - **Voice:** no voice cloning. The narration uses a stock Gemini TTS voice and is spoken by "me", not by him.
 - **Who consented:** because he has passed away, consent was asked from close family.
   - Family member: my mother (Baba's wife)
-  - Date: 2026-11-25. Channel: _TODO (phone call / message)_
+  - Date: 2026-11-25. Channel: phone call (verbal consent, recorded here the same day)
   - What they were shown: the storyboard description above and the radio cut
   - Her answer: "Yes, that would be nice, to do a tribute video." She agreed to the film as described: Baba shown only as hands, from behind and as a silhouette, with no face and no cloned voice.
 
