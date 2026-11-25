@@ -6,12 +6,15 @@ narration, then set music.chosen and music.choice_reason in storyboard.json.
 Cache key: caption + bpm + key + duration + seeds + model. Unchanged music
 settings never touch the GPU again.
 
-    python -m pipeline.music
+    python -m pipeline.music                 # Kaggle
+    python -m pipeline.music --colab         # write a Colab notebook (fallback)
+    python -m pipeline.music --import-zip Z  # bring the Colab results in
 """
 from __future__ import annotations
 
 import json
 import shutil
+from pathlib import Path
 
 from .common import OUTPUTS, Cache, input_hash, load_storyboard, log_call
 from .kaggle_job import run_job
@@ -20,7 +23,7 @@ STAGE = "music"
 OUT = OUTPUTS / "music"
 
 
-def run(resume: bool = False) -> None:
+def run(resume: bool = False, import_zip: Path | None = None) -> None:
     sb = load_storyboard()
     m = sb["music"]
     seeds = (m.get("seeds") or [])[: m["candidates"]]
@@ -39,28 +42,84 @@ def run(resume: bool = False) -> None:
                      output=f"outputs/music/candidate_{i}.wav")
         return
 
-    print(f"music: pushing ACE-Step job to Kaggle ({len(seeds)} candidates)")
-    res = run_job("acestep_job.py", "heritage-acestep", spec, "heritage acestep", cdir, timeout_s=2 * 3600, resume=resume)
+    if import_zip:
+        print(f"music: importing Colab results from {import_zip}")
+        if cdir.exists():
+            shutil.rmtree(cdir)
+        cdir.mkdir(parents=True)
+        shutil.unpack_archive(str(import_zip), str(cdir))
+        provider, res = "colab", {"status": "complete", "wall_s": 0.0, "log": ""}
+    else:
+        print(f"music: pushing ACE-Step job to Kaggle ({len(seeds)} candidates)")
+        res = run_job("acestep_job.py", "heritage-acestep", spec, "heritage acestep", cdir,
+                      timeout_s=6 * 3600, resume=resume)
+        provider = "kaggle"
     report = json.loads(report_path.read_text()) if report_path.exists() else {}
     if res["status"] != "complete" or report.get("error") or not report.get("candidates"):
         err = report.get("error") or res["log"][-800:] or res["status"]
-        log_call(STAGE, "kaggle", m["model"], spec, status="error", error=err, gpu_s=round(res["wall_s"]),
-                 latency_ms=res["wall_s"] * 1000)
+        # a job that never left the queue used no GPU: log the wait, not GPU time
+        ran = res["status"] not in ("timeout", "queued")
+        log_call(STAGE, provider, m["model"], spec, status="error", error=err,
+                 gpu_s=round(res["wall_s"]) if ran else 0, latency_ms=res["wall_s"] * 1000)
         raise SystemExit(f"music job failed: {err}")
 
     OUT.mkdir(parents=True, exist_ok=True)
     for c in report["candidates"]:
         cache.publish(cdir / c["file"], OUT / c["file"])
-        log_call(STAGE, "kaggle", m["model"], {**spec, "hash": h, "gpu": report.get("gpu")}, seed=c["seed"],
+        log_call(STAGE, provider, m["model"], {**spec, "hash": h, "gpu": report.get("gpu")}, seed=c["seed"],
                  latency_ms=c["gen_s"] * 1000, gpu_s=c["gen_s"], output=f"outputs/music/{c['file']}")
-    log_call(STAGE, "kaggle", "job-overhead", {"timings": report.get("timings"), "gpu": report.get("gpu")},
-             gpu_s=round(res["wall_s"]), latency_ms=res["wall_s"] * 1000)
-    print(f"music: {len(report['candidates'])} candidates in {res['wall_s']/60:.1f} min wall; "
-          f"timings {report.get('timings')}")
+    t = report.get("timings") or {}
+    run_s = t.get("install_s", 0) + t.get("load_s", 0)  # setup only: generation is logged per candidate
+    log_call(STAGE, provider, "job-overhead", {"timings": t, "gpu": report.get("gpu")},
+             gpu_s=round(run_s), latency_ms=res["wall_s"] * 1000, queue_and_run_s=round(res["wall_s"]))
+    print(f"music: {len(report['candidates'])} candidates on {report.get('gpu')}; timings {t}")
+
+
+def colab_notebook() -> Path:
+    """Write the same ACE-Step job as a Colab notebook (fallback when the Kaggle queue stalls)."""
+    sb = load_storyboard()
+    m = sb["music"]
+    seeds = (m.get("seeds") or [])[: m["candidates"]]
+    spec = {"caption": m["caption"], "bpm": m["bpm"], "key": m["key"], "duration_s": m["duration_s"],
+            "seeds": seeds, "dit_model": "acestep-v15-turbo", "steps": 8}
+    job = (Path(__file__).parent / "kaggle" / "acestep_job.py").read_text(encoding="utf-8")
+    job = job.replace("SPEC = {}  # replaced at push time", "SPEC = " + json.dumps(spec, ensure_ascii=False))
+    job = job.replace("/kaggle/working", "/content/heritage_music").replace("/kaggle/tmp", "/content/tmp")
+    job = job.replace('OUT = "/content/heritage_music"',
+                      'OUT = "/content/heritage_music"\nos.makedirs(OUT, exist_ok=True)', 1)
+    fetch = ("import shutil\n"
+             "from google.colab import files\n"
+             "shutil.make_archive('/content/heritage_music', 'zip', '/content/heritage_music')\n"
+             "files.download('/content/heritage_music.zip')\n")
+    md = ("# The Egg Walks: score candidates (ACE-Step 1.5)\n\n"
+          "Generated by `python -m pipeline.music --colab` from `storyboard.json`. Same job as the Kaggle one.\n\n"
+          "1. **Runtime > Change runtime type > T4 GPU**\n"
+          "2. **Runtime > Run all** (about 10-15 min: install, model download, 3 candidates)\n"
+          "3. The last cell downloads `heritage_music.zip`. Then run locally:\n"
+          "   `python -m pipeline.music --import-zip path/to/heritage_music.zip`\n")
+    def cell(kind, src):
+        c = {"cell_type": kind, "metadata": {}, "source": src.splitlines(keepends=True)}
+        if kind == "code":
+            c.update(outputs=[], execution_count=None)
+        return c
+    nb = {"nbformat": 4, "nbformat_minor": 5,
+          "metadata": {"accelerator": "GPU", "colab": {"provenance": []},
+                       "kernelspec": {"name": "python3", "display_name": "Python 3"}},
+          "cells": [cell("markdown", md), cell("code", job), cell("code", fetch)]}
+    out = OUTPUTS / "colab" / "acestep_colab.ipynb"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(nb, indent=1, ensure_ascii=False), encoding="utf-8")
+    return out
 
 
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--resume", action="store_true", help="re-attach to the running Kaggle job instead of pushing")
-    run(ap.parse_args().resume)
+    ap.add_argument("--colab", action="store_true", help="write the job as a Colab notebook and exit")
+    ap.add_argument("--import-zip", type=Path, help="import heritage_music.zip downloaded from the Colab notebook")
+    a = ap.parse_args()
+    if a.colab:
+        print(f"music: wrote {colab_notebook()}")
+    else:
+        run(a.resume, a.import_zip)
