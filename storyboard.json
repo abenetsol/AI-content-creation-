@@ -1,0 +1,364 @@
+{
+  "meta": {
+    "title": "The Egg Walks",
+    "title_native": "እንቁላል ቀስ በቀስ በእግሩ ይሄዳል",
+    "logline": "Years after losing their father, a young Ethiopian catches him in the mirror, in the way they listen during a quarrel and in the way they walk, and finally understands the proverb he always repeated.",
+    "language": "am",
+    "subtitle_language": "en",
+    "audience": "My family, and young Ethiopians at home and abroad who have lost a parent, watching on a phone in a Telegram or TikTok feed.",
+    "intent": "At the end the viewer should feel that a parent is not fully gone: they keep walking in us, slowly, the way they taught us. Family should recognise Baba in the gestures; strangers should think of their own parent.",
+    "target_duration_s": 75
+  },
+  "style": {
+    "block": "painterly digital illustration, visible soft brushwork, gentle film grain, Ethiopian highland and Addis Ababa setting, cinematic composition, single clear subject centred in the frame, calm and tender mood, no text, no lettering",
+    "present_palette": "cool blue-grey morning light, muted desaturated colours",
+    "memory_palette": "warm golden-hour amber light, soft haze, nostalgic glow",
+    "negative": "visible face, detailed facial features, text, watermark, extra fingers, deformed hands",
+    "keyframe_model": "@cf/black-forest-labs/flux-2-klein-4b",
+    "keyframe_size": 1024,
+    "reference_prompt": "a quiet Ethiopian highland compound yard in early morning, mud-plastered walls, a wooden door, a eucalyptus tree, a straw nest by the wall, soft light",
+    "reference_seed": 7,
+    "reference_image": "outputs/refs/style.png"
+  },
+  "characters": {
+    "baba": {
+      "description": "a tall dignified Ethiopian man in his fifties wearing a well-kept dark charcoal suit and white shirt, seen only from behind, in silhouette, or as his weathered hands; his face is never shown",
+      "real_person": true,
+      "consent_ref": "ETHICS.md#baba",
+      "sheet_prompt": "character reference sheet on a plain warm grey background: the same man shown three ways, left full figure from behind, centre side silhouette, right close-up of his weathered hands at the cuffs of the suit",
+      "sheet_seed": 21,
+      "reference_image": "outputs/refs/baba.png"
+    },
+    "narrator": {
+      "description": "an Ethiopian man of about thirty with dark brown skin and short black hair, in simple everyday clothes (khaki trousers or jeans and a plain shirt), seen from behind, in silhouette, as hands, or as a soft reflection in a misted mirror; his face is never shown in detail",
+      "real_person": true,
+      "consent_ref": "ETHICS.md#narrator",
+      "sheet_prompt": "character reference sheet on a plain cool grey background: the same man shown three ways, left full figure from behind, centre side silhouette against the light with no facial detail, right close-up of his hands",
+      "sheet_seed": 12,
+      "reference_image": "outputs/refs/narrator.png"
+    },
+    "child": {
+      "description": "a small Ethiopian child of about six with dark brown skin and short curly black hair, in a faded sweater, seen from behind or in profile with the face turned away",
+      "real_person": false,
+      "sheet_prompt": "character reference sheet on a plain background: the same child shown from behind and in profile with the face turned away",
+      "sheet_seed": 13,
+      "reference_image": "outputs/refs/child.png"
+    },
+    "hen": {
+      "description": "a speckled brown Ethiopian village hen",
+      "real_person": false,
+      "sheet_prompt": "reference sheet on a plain background: the same hen from the side and from the front, and a fluffy chick beside it",
+      "sheet_seed": 14,
+      "reference_image": "outputs/refs/hen.png"
+    },
+    "chick": {
+      "description": "a tiny fluffy yellow-brown chick",
+      "real_person": false,
+      "reference_image": "outputs/refs/hen.png"
+    }
+  },
+  "narration": {
+    "model": "gemini-3.8-flash-tts",
+    "fallback_models": [
+      "gemini-3.8-flash-lite-tts",
+      "gemini-3.1-flash-tts-preview"
+    ],
+    "voice": "Charon",
+    "style_instruction": "",
+    "lead_s": 0.5,
+    "tail_s": 1.8,
+    "target_syllables_per_s": 8.2
+  },
+  "shots": [
+    {
+      "id": "s01",
+      "beat": "Hook: the mirror",
+      "reason": "Opens on the film's central image, the mirror, before we know why it matters; it pays off in s07.",
+      "shot_size": "medium_close",
+      "time": "present",
+      "characters": [
+        "narrator"
+      ],
+      "image_prompt": "a hand wiping condensation from a small round bathroom mirror at dawn, a blurred figure behind the mist, quiet simple room",
+      "motion_prompt": "the hand slowly wipes the mist from the mirror, camera static",
+      "render": "kenburns",
+      "kenburns": {
+        "direction": "in",
+        "amount": 0.12
+      },
+      "seed": 1101,
+      "min_duration_s": 5.0,
+      "transition_in": "fade",
+      "narration": null
+    },
+    {
+      "id": "s02",
+      "beat": "His words",
+      "reason": "Introduces Baba through his hands and the egg, the proverb's object, so the proverb lands on a concrete image.",
+      "shot_size": "close",
+      "time": "memory",
+      "characters": [
+        "baba"
+      ],
+      "image_prompt": "extreme close-up: only two weathered hands and the white shirt cuffs of a dark charcoal suit fill the frame, gently holding a single brown egg up to warm window light; no head, no face, nothing above the wrists",
+      "motion_prompt": "the hands turn the egg slowly in the light, gentle camera push-in",
+      "render": "wan",
+      "seed": 1202,
+      "min_duration_s": 6.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "አባቴ ሁልጊዜ ይል ነበር፤ «እንቁላል ቀስ በቀስ በእግሩ ይሄዳል።»",
+        "subtitle": "My father always said: \"Little by little, the egg walks on its own legs.\""
+      }
+    },
+    {
+      "id": "s03",
+      "beat": "Impatience",
+      "reason": "Shows the narrator as a restless child who wants everything now; sets up the arc from impatience to patience.",
+      "shot_size": "medium",
+      "time": "memory",
+      "characters": [
+        "child",
+        "hen"
+      ],
+      "image_prompt": "a small child crouching impatiently beside a straw nest where a speckled hen sits on eggs, in a mud-walled highland compound yard",
+      "motion_prompt": "the child fidgets and leans closer, the hen shifts its feathers, camera static",
+      "render": "kenburns",
+      "kenburns": {
+        "direction": "right",
+        "amount": 0.1
+      },
+      "seed": 1303,
+      "min_duration_s": 5.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "ልጅ ሳለሁ አልገባኝም ነበር። ሳልራመድ መሮጥ እፈልግ ነበር።",
+        "subtitle": "As a child, I didn't understand. I wanted to run before I could walk."
+      }
+    },
+    {
+      "id": "s04",
+      "beat": "His calm",
+      "reason": "Establishes the trait the narrator inherits: Baba stayed slow and calm even in conflict. Pays off in s08.",
+      "shot_size": "medium",
+      "time": "memory",
+      "characters": [
+        "baba"
+      ],
+      "image_prompt": "a tall man in a dark charcoal suit seen from behind, standing calmly in a courtyard with one hand raised gently, speaking to an upset neighbour, warm evening light",
+      "motion_prompt": "the man lowers his hand slowly, calm stillness, camera static",
+      "render": "kenburns",
+      "kenburns": {
+        "direction": "in",
+        "amount": 0.08
+      },
+      "seed": 1404,
+      "min_duration_s": 5.5,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "እሱ ግን አይቸኩልም ነበር። ሲናደድ እንኳን ቀስ ብሎ ይናገር ነበር።",
+        "subtitle": "But he never hurried. Even when angry, he spoke slowly."
+      }
+    },
+    {
+      "id": "s05",
+      "beat": "Struggle",
+      "reason": "The egg cracks: the proverb's slow process made visible, and a wordless breath before the loss.",
+      "shot_size": "extreme_close",
+      "time": "fable",
+      "characters": [
+        "chick"
+      ],
+      "image_prompt": "extreme close-up of a brown egg in straw with a small crack and a tiny beak pushing through the shell, soft morning light",
+      "motion_prompt": "the shell cracks a little more as the tiny beak pushes through, camera static",
+      "render": "wan",
+      "seed": 1505,
+      "min_duration_s": 5.0,
+      "transition_in": "dissolve",
+      "narration": null
+    },
+    {
+      "id": "s06",
+      "beat": "Absence",
+      "reason": "Tells us Baba is gone without showing death: his empty chair and suit jacket hold his place.",
+      "shot_size": "wide",
+      "time": "present",
+      "characters": [],
+      "image_prompt": "an empty wooden chair beside a door, a dark charcoal suit jacket hanging on a hook above it, pale morning light through a window, dust in the air",
+      "motion_prompt": "dust drifts slowly through the light, camera static",
+      "render": "kenburns",
+      "kenburns": {
+        "direction": "out",
+        "amount": 0.1
+      },
+      "seed": 1606,
+      "min_duration_s": 5.5,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "አሁን ባባ የለም።",
+        "subtitle": "Baba is gone now.",
+        "keep_pace": true
+      }
+    },
+    {
+      "id": "s07",
+      "beat": "The mirror",
+      "reason": "The turn of the film: the narrator sees the father in themselves. Pays off the hook in s01.",
+      "shot_size": "medium_close",
+      "time": "present",
+      "characters": [
+        "narrator"
+      ],
+      "image_prompt": "a man of about thirty in a light shirt and khaki trousers stands seen from behind in front of a bathroom mirror heavily misted with condensation; in the mist, his blurred reflection, and faintly behind it the tall blurred ghost-like silhouette of an older grey-haired man in a dark suit; both reflections are soft shadows with no facial features, cool morning light",
+      "motion_prompt": "the faint second silhouette slowly fades in behind the reflection, camera static",
+      "render": "kenburns",
+      "kenburns": {
+        "direction": "in",
+        "amount": 0.15
+      },
+      "seed": 1708,
+      "min_duration_s": 5.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "ግን አንዳንድ ጠዋት መስታወት ስመለከት… እሱን አያለሁ።",
+        "subtitle": "But some mornings, in the mirror… I see him."
+      }
+    },
+    {
+      "id": "s08",
+      "beat": "Inherited calm",
+      "reason": "Match to s04: the narrator now handles conflict the way Baba did, with the same raised, calming hand.",
+      "shot_size": "medium",
+      "time": "present",
+      "characters": [
+        "narrator"
+      ],
+      "image_prompt": "a man seen from behind at a table, listening calmly to an upset friend across from them, one hand raised gently, cool evening light in a small Addis Ababa cafe",
+      "motion_prompt": "the hand lowers slowly, calm stillness, camera static",
+      "render": "kenburns",
+      "kenburns": {
+        "direction": "in",
+        "amount": 0.08
+      },
+      "seed": 1808,
+      "min_duration_s": 5.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "ግጭት ሲገጥመኝ፣ እንደ እሱ ቀስ ብዬ አዳምጣለሁ።",
+        "subtitle": "When conflict comes, I listen slowly, like him."
+      }
+    },
+    {
+      "id": "s09",
+      "beat": "Inherited walk",
+      "reason": "The second inheritance, the walk, which ties directly to the proverb's 'walks on its own legs'.",
+      "shot_size": "wide",
+      "time": "present",
+      "characters": [
+        "narrator"
+      ],
+      "image_prompt": "a man seen from behind walking unhurriedly down a quiet cobbled Addis Ababa street, hands clasped behind the back, cool early light",
+      "motion_prompt": "the person walks slowly away from the camera, camera follows gently",
+      "render": "wan",
+      "seed": 1909,
+      "min_duration_s": 4.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "አረማመዴ እንኳን የእሱን ይመስላል።",
+        "subtitle": "Even my walk looks like his."
+      }
+    },
+    {
+      "id": "s10",
+      "beat": "The egg walks",
+      "reason": "The proverb fulfilled literally: the hatched chick takes its first steps behind the hen.",
+      "shot_size": "close",
+      "time": "fable",
+      "characters": [
+        "chick",
+        "hen"
+      ],
+      "image_prompt": "a tiny fluffy chick taking wobbly first steps across a sunlit dirt compound yard, following a speckled hen, low ground-level view",
+      "motion_prompt": "the chick takes small wobbly steps forward behind the hen, camera low and static",
+      "render": "wan",
+      "seed": 2010,
+      "min_duration_s": 5.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "ቀስ በቀስ፣ ሳላውቀው፣ እንደ እሱ ሆንኩ።",
+        "subtitle": "Little by little, without noticing, I became like him."
+      }
+    },
+    {
+      "id": "s11",
+      "beat": "On my own legs",
+      "reason": "Resolution: the narrator, now wearing a suit jacket like Baba's, walks a highland road at golden hour with Baba's silhouette beside him before it fades. The suit completes the inheritance.",
+      "shot_size": "extreme_wide",
+      "time": "memory",
+      "characters": [
+        "narrator",
+        "baba"
+      ],
+      "image_prompt": "two figures seen from behind walking side by side on a winding highland dirt road at golden hour, a man of about thirty wearing a dark suit jacket over khaki trousers, and beside him a faint translucent older man in a dark charcoal suit, green hills and eucalyptus trees",
+      "motion_prompt": "both figures walk slowly away along the road, the taller figure gently fades, camera static",
+      "render": "wan",
+      "seed": 2111,
+      "min_duration_s": 7.0,
+      "transition_in": "dissolve",
+      "narration": {
+        "text": "ባባ፣ አሁን በእግሬ እሄዳለሁ። አንተ እንዳስተማርከኝ።",
+        "subtitle": "Baba, I walk on my own legs now. Just as you taught me.",
+        "delay_s": 0.8
+      }
+    }
+  ],
+  "music": {
+    "model": "ACE-Step-1.5",
+    "caption": "instrumental, gentle nostalgic Ethiopian-inspired film score in the feel of the tizita mode, softly plucked krar, warm cello pad, sparse washint flute, slow and tender, lots of space, no drums, no vocals",
+    "bpm": 68,
+    "key": "C minor",
+    "duration_s": 85,
+    "candidates": 3,
+    "seeds": [
+      301,
+      302,
+      303
+    ],
+    "chosen": null,
+    "choice_reason": "",
+    "duck": {
+      "threshold": 0.02,
+      "ratio": 6,
+      "attack_ms": 300,
+      "release_ms": 1500,
+      "music_gain_db": -6
+    },
+    "cues": [
+      {
+        "at_shot": "s01",
+        "description": "Music begins alone, a single krar phrase under the mirror."
+      },
+      {
+        "at_shot": "s06",
+        "description": "Music thins almost to silence on 'Baba is gone now'."
+      },
+      {
+        "at_shot": "s07",
+        "description": "The theme returns, softly, as the narrator sees him in the mirror."
+      },
+      {
+        "at_shot": "s11",
+        "description": "Fullest moment of the score, then a slow fade over the end card."
+      }
+    ]
+  },
+  "end_card": {
+    "lines": [
+      "እንቁላል ቀስ በቀስ በእግሩ ይሄዳል",
+      "Little by little, the egg walks on its own legs.",
+      "For Baba.",
+      "Made with AI: images FLUX.2 klein, video Wan 2.2, music ACE-Step 1.5, voice Gemini TTS."
+    ],
+    "duration_s": 4
+  }
+}
