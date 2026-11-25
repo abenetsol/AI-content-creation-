@@ -72,7 +72,12 @@ def push(script: str, slug: str, spec: dict, title: str) -> str:
         }
         (dpath / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
         r = _run(["kernels", "push", "-p", str(dpath)])
-        print("  " + r.stdout.strip().splitlines()[-1])
+        msg = r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr.strip()
+        print("  " + msg)
+        # The CLI exits 0 even when Kaggle refuses the push (e.g. "Maximum batch GPU
+        # session count of 2 reached"); without this check we'd wait on a job that doesn't exist (F15).
+        if "error" in msg.lower():
+            raise RuntimeError(f"Kaggle refused the push: {msg}")
     return f"{user}/{slug}"
 
 

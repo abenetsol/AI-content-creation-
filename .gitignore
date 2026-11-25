@@ -10,3 +10,5 @@ outputs/assemble/
 *.tmp.wav
 # the challenge brief (not ours to publish)
 *.pdf
+# rendered films: rebuilt deterministically by `make assemble`; final cuts are hosted (links in README)
+outputs/film/
