@@ -132,7 +132,7 @@
       "min_duration_s": 5.0,
       "transition_in": "dissolve",
       "narration": {
-        "text": "ልጅ ሳለሁ አልገባኝም ነበር። ሳልራመድ መሮጥ እፈልግ ነበር።",
+        "text": "ልጅ እያለሁ አልገባኝም፤ ሳልራመድ መሮጥ ፈለግሁ።",
         "subtitle": "As a child, I didn't understand. I wanted to run before I could walk."
       }
     },
@@ -156,8 +156,8 @@
       "min_duration_s": 5.5,
       "transition_in": "dissolve",
       "narration": {
-        "text": "እሱ ግን አይቸኩልም ነበር። ሲናደድ እንኳን ቀስ ብሎ ይናገር ነበር።",
-        "subtitle": "But he never hurried. Even when angry, he spoke slowly."
+        "text": "እሱ ግን ቸኩሎ አያውቅም። ሲቆጣ እንኳ በእርጋታ ይናገር ነበር።",
+        "subtitle": "But he never hurried. Even when angry, he spoke calmly."
       }
     },
     {

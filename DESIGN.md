@@ -49,13 +49,15 @@ Every shot's reason is stored in `storyboard.json → shots[].reason`.
 | 1–3 | (answers to the specific questions) | **"*አረማመዴም የእሱ ነው* is not quite right, refine it."** | The line was a word-for-word construction ("my walk is also his"); it doesn't sound like how people speak. |
 | 1–3 | | **"The speed of each sentence is not equal, even though mostly it's not obvious."** | Measured it: lines ranged from **6.6 to 9.6 syllables/s**. Lines s09–s11 came from the fallback TTS model after the daily quota ran out (FAILURES F3), so the voice also shifted slightly at the end. |
 | – | Me, on the rough cut (Ken Burns stills) | "Good, but it needs a little more flow and smoothness." | Hard cuts between still images feel like a slideshow; linear zooms start and stop abruptly. |
+| – | Me, native-speaker listen of the rough cut | "The word *ነበር* is said too many times and doesn't feel natural." | It appeared **5 times in the first 3 lines** (past-habitual auxiliary on every verb); written Amharic tolerates that, spoken Amharic doesn't. |
 
 **What changed because of it** (visible in `storyboard.json` and the code):
 
 1. **s09 narration rewritten**: *አረማመዴም የእሱ ነው።* → ***አረማመዴ እንኳን የእሱን ይመስላል።*** ("Even my walk looks like his."). Regenerated that one line only (1 TTS call, 8 cached).
 2. **Even pace:** new `narration.target_syllables_per_s = 8.2`; each line is time-stretched (pitch-preserving `atempo`, max ±15%) toward it. Spread across lines went **from 3.05 to 0.96 syllables/s**. s06 ("Baba is gone now") is marked `keep_pace`, because its slowness is the point. (EXPERIMENTS E12)
 3. **One voice:** the three fallback-model lines will be re-voiced with the primary model when its quota resets (`python -m pipeline.narration --upgrade`).
-4. **Flow:** every hard cut became a 0.8 s dissolve; Ken Burns moves now ease in and out (cosine) and are 4x supersampled to remove jitter. A side effect I kept: the hatching egg (s05) now dissolves into Baba's empty chair (s06).
+4. ***ነበር* 5 → 2:** kept it only where "used to" carries meaning (his saying in s02, his habit in s04). s03 → *ልጅ እያለሁ አልገባኝም፤ ሳልራመድ መሮጥ ፈለግሁ።*; s04 → *እሱ ግን ቸኩሎ አያውቅም። ሲቆጣ እንኳ በእርጋታ ይናገር ነበር።* (subtitle: "Even when angry, he spoke calmly."). 2 TTS calls, 7 cached.
+5. **Flow:** every hard cut became a 0.8 s dissolve; Ken Burns moves now ease in and out (cosine) and are 4x supersampled to remove jitter. A side effect I kept: the hatching egg (s05) now dissolves into Baba's empty chair (s06).
 
 ## 5. User test 2: the near-final cut
 
