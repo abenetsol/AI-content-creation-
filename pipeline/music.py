@@ -57,10 +57,10 @@ def run(resume: bool = False, import_zip: Path | None = None) -> None:
     report = json.loads(report_path.read_text()) if report_path.exists() else {}
     if res["status"] != "complete" or report.get("error") or not report.get("candidates"):
         err = report.get("error") or res["log"][-800:] or res["status"]
-        # a job that never left the queue used no GPU: log the wait, not GPU time
-        ran = res["status"] not in ("timeout", "queued")
+        # GPU time comes from the job's own timings; wall time includes the queue (F16)
         log_call(STAGE, provider, m["model"], spec, status="error", error=err,
-                 gpu_s=round(res["wall_s"]) if ran else 0, latency_ms=res["wall_s"] * 1000)
+                 gpu_s=round(sum((report.get("timings") or {}).values())), latency_ms=res["wall_s"] * 1000,
+                 queue_and_run_s=round(res["wall_s"]))
         raise SystemExit(f"music job failed: {err}")
 
     OUT.mkdir(parents=True, exist_ok=True)

@@ -324,8 +324,8 @@
       302,
       303
     ],
-    "chosen": null,
-    "choice_reason": "",
+    "chosen": 2,
+    "choice_reason": "Chosen by the narrator after listening to all three under the narration on the draft cut: it feels good and relates to the story. Even, compact dynamics (LRA 7.8 LU) keep it a steady bed under the voice.",
     "duck": {
       "threshold": 0.02,
       "ratio": 6,

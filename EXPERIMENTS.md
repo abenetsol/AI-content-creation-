@@ -51,8 +51,11 @@ One change per experiment, fixed seed where possible. Raw numbers are in `runs.j
 - **Change 2:** `alimiter` at −1.5 dBFS after loudnorm.
 - **Result 2:** −14.35 LUFS / **−1.41 dBTP**. Both inside target; loudness moved only 0.08 LU.
 
-### E10: Score candidates (ACE-Step 1.5): _pending Kaggle run_
-- 3 seeds (301–303), caption in `storyboard.json → music`. Listen under the narration at low volume, record the choice and why.
+### E10: Score candidates (ACE-Step 1.5)
+- **Hypothesis:** with the same caption (tizita-inspired krar, cello, washint; 68 bpm, C minor, instrumental), different seeds give scores different enough that the choice matters, and the choice should be made *under the voice*, not by listening to the score alone.
+- **Change:** 3 seeds (301, 302, 303), 8 turbo steps, DiT only (no LM planner) on a Colab T4, after the Kaggle queue stalled (FAILURES F16, F17). New `assemble --audition-music` mixes each candidate under the narration with the real ducking and loudness chain and lays it on the draft picture.
+- **Result:** 17–20 s of GPU per 85 s candidate. Measured differences: candidate 0 had the widest dynamics (LRA 11.2 LU), candidate 1 was 8.2 LU, candidate 2 was 7.8 LU (most compact). Under the narration, candidate 0 came out 0.6 LU quieter than the others, so I flagged it to avoid a "louder sounds better" bias.
+- **Decision:** **candidate 2 (seed 303)**, chosen by the narrator: *"it feels good and relates to the story."* Its even, compact level sits under the voice as a steady bed and doesn't fight it. Recorded in `storyboard.json → music.chosen / choice_reason`.
 
 ### E11: Wan 2.2 clip vs Ken Burns: _pending Kaggle run_
 - Same shot (s10, the chick's first steps) as Wan i2v vs Ken Burns on the keyframe; measure GPU minutes vs perceived quality.

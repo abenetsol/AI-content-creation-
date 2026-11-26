@@ -37,18 +37,24 @@ def summarise(rows: list[dict]) -> str:
         errs = sum(1 for r in rs if r.get("status") not in ("ok",))
         lats = [r["latency_ms"] for r in new if r.get("latency_ms")]
         med = f"{statistics.median(lats)/1000:.1f} s" if lats else "–"
-        tot = f"{sum(lats)/1000/60:.1f} min" if lats else "–"
-        gpu = sum(r.get("gpu_s") or 0 for r in rs if model == "job-overhead") / 60
+        if model == "job-overhead":  # wall time here is mostly queue; report it separately
+            med = tot = "–"
+        else:
+            tot = f"{sum(lats)/1000/60:.1f} min" if lats else "–"
+        gpu = sum(r.get("gpu_s") or 0 for r in rs if r.get("provider") in ("kaggle", "colab")) / 60
         usd = 0.0
         if "tts" in model:
             usd = len(new) * LIST_PRICE["gemini_tts_per_call"]
         elif "flux" in model:
             usd = len(new) * LIST_PRICE["flux_klein_per_image"]
-        elif model == "job-overhead":
+        if gpu:
             usd = gpu / 60 * LIST_PRICE["t4_per_gpu_hour"]
         total_usd += usd
         out.append(f"| {stage} | `{model}` | {len(new)} | {cached} | {errs} | {med} | {tot} | "
                    f"{gpu:.1f} | ${usd:.3f} |")
+    queue_h = sum(r.get("queue_wait_s") or 0 for r in rows) / 3600
+    gpu_m = sum(r.get("gpu_s") or 0 for r in rows if r.get("provider") in ("kaggle", "colab")) / 60
+    out.append(f"\n**GPU used: {gpu_m:.1f} min. Logged queue wait: {queue_h:.1f} h** (jobs waiting for a free T4).")
     out.append(f"\n**Total list-price equivalent: ${total_usd:.2f}** (actual spend: $0, all free tiers). "
                f"{len(rows)} logged calls.")
     return "\n".join(out)

@@ -102,7 +102,9 @@ def run(only: list[str] | None = None, dry_run: bool = False, resume: bool = Fal
     log_call(STAGE, "kaggle", "job-overhead", {"timings": rep.get("report.json", {}).get("timings"),
                                                 "load_s": rep.get("report_gpu0.json", {}).get("load_s")},
              # queue wait is not GPU time: a job that never ran logs 0, a finished one its own load time
-             gpu_s=0 if res["status"] in ("timeout", "queued") else round(rep.get("report_gpu0.json", {}).get("load_s") or 0),
+             gpu_s=round(sum(v for k, v in (rep.get("report.json", {}).get("timings") or {}).items()
+                             if k != "generate_s") + (rep.get("report_gpu0.json", {}).get("load_s") or 0)
+                         + (0 if clips else (rep.get("report.json", {}).get("timings") or {}).get("generate_s", 0))),
              latency_ms=res["wall_s"] * 1000, queue_and_run_s=round(res["wall_s"]),
              status="ok" if not err else "partial" if clips else "error", error=err)
     done = {c["id"] for c in clips}
