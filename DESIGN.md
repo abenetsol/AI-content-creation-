@@ -61,10 +61,12 @@ Every shot's reason is stored in `storyboard.json → shots[].reason`.
 
 ## 5. User test 2: the near-final cut
 
+**Prototype.** The final cut (`film_9x16.mp4`, 70.6 s): score candidate 2, one consistent voice, dissolves and eased camera moves, subtitles and the AI end card.
+
 | # | Who | Channel | What they said | Insight |
 |---|---|---|---|---|
-| 1 | _TODO_ | | | |
-| 2 | _TODO_ | | | |
-| 3 | _TODO_ | | | |
+| 1 | My mother (Baba's wife, who gave consent) | Sent the film directly | She loved it. | The person whose consent the film rests on approved the finished tribute, not just the idea of it. |
+| 2+ | My cohort team on Slack | Slack | They approved it. | Approval from the cohort audience; no problems were raised. |
 
-**What changed:** _TODO_
+**What changed:** nothing. Unlike test 1, test 2 produced approval rather than problems, so the final cut was kept as it was. I count this as a weaker test than test 1: test 1 showed that approval without specific questions gives little to act on.
+

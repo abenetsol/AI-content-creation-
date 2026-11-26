@@ -2,6 +2,8 @@
 
 A 70-second heritage short about my late father and the proverb he always repeated, *"little by little, the egg walks on its own legs"*, made entirely by a code pipeline. Amharic narration, English subtitles, original score, exported vertical (9:16) and horizontal (16:9).
 
+**Watch:** [vertical 9:16](https://drive.google.com/file/d/1ESeCBI_8M_e1qHRGkqqFD4UlkiwR0fHG/view?usp=drive_link) · [horizontal 16:9](https://drive.google.com/file/d/1WGv59WoGrdhSnzL8d-FujPdD_68VYeD_/view?usp=drive_link)
+
 One file, [`storyboard.json`](storyboard.json), is the contract between five stages: **narration → keyframes → moving shots → music → assembly**. Change one line in it, re-run, and only what that line affects is regenerated.
 
 ## Run it
