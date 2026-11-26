@@ -373,10 +373,39 @@ def run(radio: bool = False, aspects: list[str] | None = None, draft: bool = Fal
     return outs
 
 
+def audition_music() -> list[Path]:
+    """Mix every score candidate under the narration and lay it on the draft picture,
+    so the choice is made in context (music under voice), not by listening to the score alone."""
+    sb = load_storyboard()
+    tl = build_timeline(sb)
+    draft = FILM / "film_9x16_draft.mp4"
+    outs = []
+    for i in range(sb["music"]["candidates"]):
+        if not (OUTPUTS / "music" / f"candidate_{i}.wav").exists():
+            continue
+        sb["music"]["chosen"] = i
+        wav = WORK / f"audition_{i}.wav"
+        stats = sound(sb, tl, wav)
+        out = OUTPUTS / "music" / f"audition_{i}.mp4"
+        if draft.exists():
+            run_ff(["-i", str(draft), "-i", str(wav), "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+                    "-c:a", "aac", "-b:a", "192k", "-shortest", str(out)])
+        else:
+            out = out.with_suffix(".m4a")
+            run_ff(["-i", str(wav), "-c:a", "aac", "-b:a", "192k", str(out)])
+        print(f"  candidate {i}: {stats['final_lufs']} LUFS -> {out.relative_to(ROOT)}")
+        outs.append(out)
+    return outs
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--radio", action="store_true", help="narration + placeholder music on black")
     ap.add_argument("--aspect", nargs="*", choices=list(ASPECTS))
     ap.add_argument("--draft", action="store_true", help="half resolution, for quick checks")
+    ap.add_argument("--audition-music", action="store_true", help="each score candidate under the narration")
     a = ap.parse_args()
-    run(a.radio, a.aspect, a.draft)
+    if a.audition_music:
+        audition_music()
+    else:
+        run(a.radio, a.aspect, a.draft)
