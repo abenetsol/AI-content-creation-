@@ -1,6 +1,6 @@
 # The Egg Walks: እንቁላል ቀስ በቀስ በእግሩ ይሄዳል
 
-A 72-second heritage short about my late father and the proverb he always repeated, *"little by little, the egg walks on its own legs"*, made entirely by a code pipeline. Amharic narration, English subtitles, original score, exported vertical (9:16) and horizontal (16:9).
+A 70-second heritage short about my late father and the proverb he always repeated, *"little by little, the egg walks on its own legs"*, made entirely by a code pipeline. Amharic narration, English subtitles, original score, exported vertical (9:16) and horizontal (16:9).
 
 One file, [`storyboard.json`](storyboard.json), is the contract between five stages: **narration → keyframes → moving shots → music → assembly**. Change one line in it, re-run, and only what that line affects is regenerated.
 
