@@ -8,6 +8,8 @@ import sys
 import time
 import traceback
 
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
 SPEC = {}  # replaced at push time
 
 OUT = "/kaggle/working"
@@ -37,6 +39,24 @@ def worker(gpu: int, ids: list):
         # T4 has no native bf16: transformer in fp16, VAE in fp32 (fp16 VAE gives NaNs / black frames)
         vae = AutoencoderKLWan.from_pretrained(mid, subfolder="vae", torch_dtype=torch.float32)
         pipe = WanImageToVideoPipeline.from_pretrained(mid, vae=vae, torch_dtype=torch.float16)
+        # The VAE encodes the start image *before* the transformer runs, so model offload never
+        # moves the ~11 GB text encoder off the GPU and the VAE OOMs (FAILURES F17).
+        # Encode every prompt up front, then drop the text encoder before offloading the rest.
+        import gc
+        pipe.text_encoder.to("cuda")
+        embeds = {}
+        with torch.no_grad():
+            for s in SPEC["shots"]:
+                pe, ne = pipe.encode_prompt(prompt=s["prompt"], negative_prompt=SPEC["negative"],
+                                            do_classifier_free_guidance=True, num_videos_per_prompt=1, max_sequence_length=512,
+                                            device=torch.device("cuda"))
+                embeds[s["id"]] = (pe.cpu(), ne.cpu())
+        pipe.text_encoder.to("cpu")
+        pipe.text_encoder = None
+        gc.collect()
+        torch.cuda.empty_cache()
+        if hasattr(pipe.vae, "enable_tiling"):
+            pipe.vae.enable_tiling()
         pipe.enable_model_cpu_offload()
         rep["load_s"] = round(time.time() - t, 1)
         save()
@@ -46,7 +66,8 @@ def worker(gpu: int, ids: list):
             t1 = time.time()
             image = load_image(f"{IMG}/{sid}.jpg")
             g = torch.Generator("cuda").manual_seed(s["seed"])
-            frames = pipe(image=image, prompt=s["prompt"], negative_prompt=SPEC["negative"],
+            pe, ne = embeds[sid]
+            frames = pipe(image=image, prompt_embeds=pe.to("cuda"), negative_prompt_embeds=ne.to("cuda"),
                           height=SPEC["height"], width=SPEC["width"], num_frames=SPEC["num_frames"],
                           num_inference_steps=SPEC["steps"], guidance_scale=SPEC["guidance"],
                           generator=g).frames[0]

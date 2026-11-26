@@ -30,7 +30,13 @@ try:
     sh("nvidia-smi --query-gpu=name,memory.total --format=csv || true")
     sh("python -c \"import socket; socket.create_connection(('github.com', 443), 5); print('internet: ok')\"")
     sh(f"git clone --depth 1 https://github.com/ACE-Step/ACE-Step-1.5.git {REPO}")
-    sh(f"cd {REPO} && {sys.executable} -m pip install -q --ignore-requires-python -e .")
+    # nano-vllm is a bundled local package (not on PyPI) used only by the LM planner, which we
+    # don't load (DiT-only). Install it without its deps (flash-attn wheels) so pip can resolve
+    # ace-step; torch is pinned to +cu128 builds, hence the PyTorch index (FAILURES F17).
+    sh(f"cd {REPO} && {sys.executable} -m pip install -q --no-deps --ignore-requires-python "
+       f"./acestep/third_parts/nano-vllm")
+    sh(f"cd {REPO} && {sys.executable} -m pip install -q --ignore-requires-python "
+       f"--extra-index-url https://download.pytorch.org/whl/cu128 -e .")
     report["timings"]["install_s"] = round(time.time() - t, 1)
     save()
     sys.path.insert(0, REPO)
