@@ -55,7 +55,7 @@ Every shot's reason is stored in `storyboard.json → shots[].reason`.
 
 1. **s09 narration rewritten**: *አረማመዴም የእሱ ነው።* → ***አረማመዴ እንኳን የእሱን ይመስላል።*** ("Even my walk looks like his."). Regenerated that one line only (1 TTS call, 8 cached).
 2. **Even pace:** new `narration.target_syllables_per_s = 8.2`; each line is time-stretched (pitch-preserving `atempo`, max ±15%) toward it. Spread across lines went **from 3.05 to 0.96 syllables/s**. s06 ("Baba is gone now") is marked `keep_pace`, because its slowness is the point. (EXPERIMENTS E12)
-3. **One voice:** the three fallback-model lines will be re-voiced with the primary model when its quota resets (`python -m pipeline.narration --upgrade`).
+3. **One voice:** once the primary model's daily quota reset (2026-11-26), `python -m pipeline.narration --upgrade` re-voiced the 5 lines that had come from fallback models (s03, s04, s09, s10, s11): 5 TTS calls, 4 lines cached. All 9 lines now share one model and voice.
 4. ***ነበር* 5 → 2:** kept it only where "used to" carries meaning (his saying in s02, his habit in s04). s03 → *ልጅ እያለሁ አልገባኝም፤ ሳልራመድ መሮጥ ፈለግሁ።*; s04 → *እሱ ግን ቸኩሎ አያውቅም። ሲቆጣ እንኳ በእርጋታ ይናገር ነበር።* (subtitle: "Even when angry, he spoke calmly."). 2 TTS calls, 7 cached.
 5. **Flow:** every hard cut became a 0.8 s dissolve; Ken Burns moves now ease in and out (cosine) and are 4x supersampled to remove jitter. A side effect I kept: the hatching egg (s05) now dissolves into Baba's empty chair (s06).
 
